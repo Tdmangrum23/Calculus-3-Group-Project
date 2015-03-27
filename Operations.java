@@ -4,7 +4,7 @@ public class Operations {
 	
 	public static double[][] multiplication(double[][] X, double[][] Y) {
 		if (X[0].length != Y.length) {
-			throw new IllegalArgumetnException("Dimensions do not match");
+			throw new IllegalArgumentException("Dimensions do not match");
 		}
 
 		double[][] Z = new double[X.length][Y[0].length];
