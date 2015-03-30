@@ -31,5 +31,9 @@ public class QR_Factorization_Householder extends Matrix, QR {
 		//Initialize R matrix
 		//Do R matrix multiplication (Q * A) 
 		Matrix R_Matrix = Q_Matrix.matrixMultiplication(inputMatrix);
+		Obj[] QR_Matrix = new Obj[2]
+		QR_Matrix[0] = Q_Matrix;
+		QR_Matrix[1] = R_Matrix;
+		return QR_Matrix;
 	}
 }
