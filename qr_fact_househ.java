@@ -6,11 +6,8 @@ import java.util.ArrayList;
  * A class that holds methods that QR-factorize matrices by method of
  * Householder Reflections.
  * 
- * @author Mitchell Manguno
- * @version 2.0
- * @since 2014-November-20
  */
-public class qr_fact_househ {
+public class qr_fact_househ extends Operations {
 
     
     /**
@@ -48,7 +45,7 @@ public class qr_fact_househ {
             Matrix u = calculateU(curMatrix);
             
             //From here, we need matrix multiply to find Hn = I - 2uuT
-            Matrix houseNRaw = matrix_multiplication.multiply(u, u.transpose());
+            Matrix houseNRaw = multiplication(u, u.transpose());
             Matrix ident = Matrix.identity(houseNRaw.getRowDimension(),
                     houseNRaw.getColumnDimension());
             Matrix houseN = ident.minus(houseNRaw.times(2));
@@ -56,7 +53,7 @@ public class qr_fact_househ {
             //Put the values into the container matrix
             cont.setMatrix(startPos, rows - 1, startPos, rows - 1, houseN);
             houseHolders.add(cont);
-            B = matrix_multiplication.multiply(cont, B);
+            B = multiplication(cont, B);
             chosenColumn[0] = i + 1;
             startPos++;
         }
@@ -64,9 +61,53 @@ public class qr_fact_househ {
         Matrix Q = Matrix.identity(rows, rows);
         
         for (Matrix i : houseHolders) {
-            Q = matrix_multiplication.multiply(Q, i);
+            Q = multiplication(Q, i);
         }
 
         Matrix[] QR = {Q, B};
         return QR;
     }
+    
+    /**
+     * Takes in a 2-dimensional array of doubles, mutates this into a
+     * Jama.Matrix, and then decomposes it into a Q matrix and an R matrix by
+     * means of Householder Reflections.
+     * 
+     * @param A the given 2-dimensional array of doubles
+     * @return an array of the two matrices, Q and R
+     */
+    public static Matrix[] factorize(double[][] A) {
+        return factorize(new Matrix(A));
+    }
+ 
+    /**
+     * Calculate the normal u vector that is required to reflect the matrix.
+     * 
+     * @param v the n X 1 matrix whose u vector is to be found
+     * @return the u vector of the given matrix
+     */
+    public static Matrix calculateU(Matrix v) {
+        //Create e1, the first vector of the standard basis
+        Matrix e = Matrix.identity(v.getRowDimension(), 1);
+        //Get the magnitude of the v matrix
+        double rawMagnitude = 0;
+        for (int i = 0; i < v.getRowDimension(); i++) {
+            double value = v.get(i,0);
+            rawMagnitude += (value * value);
+        }
+        double magnitude = Math.sqrt(rawMagnitude);
+        
+        Matrix eMutated = e.times(magnitude);
+        Matrix vMutated = v.plus(eMutated);
+        //Get the magnitude of the vMutated matrix
+        rawMagnitude = 0;
+        for (int j = 0; j < vMutated.getRowDimension(); j++) {
+            double value = vMutated.get(j,0);
+            rawMagnitude += (value * value);
+        }
+        magnitude = Math.sqrt(rawMagnitude);
+        double magInverse = Math.pow(magnitude, -1.0);
+        Matrix U = vMutated.times(magInverse);
+        return U;
+    }
+}
