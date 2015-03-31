@@ -1,4 +1,5 @@
 import Jama.Matrix;
+import java.util.Arrays;
 
 /**
  * A class that holds a method that QR-factorizes matrices by method of
@@ -8,8 +9,8 @@ import Jama.Matrix;
 public class qr_fact_givens extends Operations {
    
     
-    public static Matrix[] factorize(Matrix A) {
-        return factorize(A.getArray());
+    public static void factorize(Matrix A) {
+        factorize(A.getArray());
     }
     
     
@@ -20,10 +21,13 @@ public class qr_fact_givens extends Operations {
      * @param A the given matrix
      * @return an array of the two matrices, Q and R
      */
-   public static Matrix[] factorize(double[][] A) {
+   public static void factorize(double[][] A) {
         if (A == null) {
             throw new IllegalArgumentException();
         }
+
+         //Keep a copy of the Matrix for error later
+        double[][] errorMatrix = deepCopy(A);
         
         double[][] An = A;
         double[][] Gn = new double[A.length][A.length];
@@ -75,8 +79,10 @@ public class qr_fact_givens extends Operations {
         Matrix Rmatrix = new Matrix(R);
         Matrix[] QR = {Qmatrix, Rmatrix};
 
-        
-        return QR;
+        double error = norm(matrixSubtraction(Rmatrix.getArrayCopy(), twoDimensionalMultiplication(Qmatrix.getArrayCopy(), errorMatrix)));
+        Qmatrix.print(10, 6);
+        Rmatrix.print(10, 6);
+        System.out.println(error);
     }
 
 }

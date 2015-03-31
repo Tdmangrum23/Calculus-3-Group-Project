@@ -1,6 +1,6 @@
 import Jama.Matrix;
 import java.util.ArrayList;
-import Java.util.Arrays;
+import java.util.Arrays;
 
 /**
  * A class that holds methods that QR-factorize matrices by method of
@@ -17,7 +17,7 @@ public class qr_fact_househ extends Operations {
      * @param A the given matrix
      * @return an array of the two matrices, Q and R
      */
-    public static Matrix[] factorize(Matrix A) {
+    public static void factorize(Matrix A) {
         
         //Keep a copy of the Matrix for error later
         double[][] errorMatrix = deepCopy(A.getArrayCopy());
@@ -65,8 +65,9 @@ public class qr_fact_househ extends Operations {
 
         // Calculate Error
         double error = norm(matrixSubtraction(B.getArrayCopy(), twoDimensionalMultiplication(Q.getArrayCopy(), errorMatrix)));
-        Obj[] QR = {Q, B, error};
-        return QR;
+        Q.print(10, 6);
+        B.print(10, 6);
+        System.out.println(error);
     }
     
     /**
@@ -77,8 +78,8 @@ public class qr_fact_househ extends Operations {
      * @param A the given 2-dimensional array of doubles
      * @return an array of the two matrices, Q and R
      */
-    public static Matrix[] factorize(double[][] A) {
-        return factorize(new Matrix(A));
+    public static void factorize(double[][] A) {
+        factorize(new Matrix(A));
     }
  
     /**
