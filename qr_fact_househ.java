@@ -1,6 +1,6 @@
 import Jama.Matrix;
 import java.util.ArrayList;
-
+import Java.util.Arrays;
 
 /**
  * A class that holds methods that QR-factorize matrices by method of
@@ -18,10 +18,9 @@ public class qr_fact_househ extends Operations {
      * @return an array of the two matrices, Q and R
      */
     public static Matrix[] factorize(Matrix A) {
-        //Check to make sure this is a square matrix
-        //if (columns != rows || null == A) {
-        //    throw new IllegalArgumentException();
-        //}
+        
+        //Keep a copy of the Matrix for error later
+        double[][] errorMatrix = deepCopy(A.getArrayCopy());
         
         int columns = A.getColumnDimension();
         int rows = A.getRowDimension();
@@ -64,7 +63,9 @@ public class qr_fact_househ extends Operations {
             Q = multiplication(Q, i);
         }
 
-        Matrix[] QR = {Q, B};
+        // Calculate Error
+        double error = norm(matrixSubtraction(B.getArrayCopy(), twoDimensionalMultiplication(Q.getArrayCopy(), errorMatrix)));
+        Obj[] QR = {Q, B, error};
         return QR;
     }
     
@@ -96,9 +97,10 @@ public class qr_fact_househ extends Operations {
             rawMagnitude += (value * value);
         }
         double magnitude = Math.sqrt(rawMagnitude);
-        
-        Matrix eMutated = e.times(magnitude);
-        Matrix vMutated = v.plus(eMutated);
+        double firstElementV = v.get(0,0);
+        firstElementV = firstElementV - magnitude;
+        Matrix vMutated = v;
+        vMutated.set(0,0,firstElementV);
         //Get the magnitude of the vMutated matrix
         rawMagnitude = 0;
         for (int j = 0; j < vMutated.getRowDimension(); j++) {

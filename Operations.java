@@ -1,4 +1,6 @@
 import Jama.Matrix;
+import Java.util.Arrays;
+import Java.util.stream;
 
 public class Operations {
 
@@ -20,24 +22,11 @@ public class Operations {
         return new Matrix(Z);
     }
 
-    public static Matrix multiplication(Matrix inputX, Matrix inputY) {
-        double[][] X = inputX.getArrayCopy();
-        double[][] Y = inputY.getArrayCopy();
-        if (X[0].length != Y.length) {
-            throw new IllegalArgumentException("Dimensions do not match");
-        }
-
-        double[][] Z = new double[X.length][Y[0].length];
-
-        for (int i = 0; i < Z.length; i++) {
-            for (int j = 0; j < Z[0].length; j++) {
-                for (int k = 0; k < X[0].length; k++) {
-                    Z[i][j] += X[i][k] * Y[k][j];
-                }
-            }
-        }
-
-        return new Matrix(Z);
+    public static Matrix multiplication(Matrix x, Matrix y) {
+        double[][] xDub = x.getArrayCopy();
+        double[][] yDub = y.getArrayCopy();
+        
+        return multiplication(xDub, yDub);
     }
 
     public static double[][] twoDimensionalMultiplication(double[][] X, double[][] Y) {
@@ -56,6 +45,13 @@ public class Operations {
         }
 
         return Z;
+    }
+
+    static double norm(double[][] matrix) {
+        return Arrays.stream(matrix)
+                .flatMapToDouble(x -> Arrays.stream(x))
+                .map(x -> Math.abs(x))
+                .max().getAsDouble();
     }
 
     public static double[][] deepCopy(double[][] matrix) {
