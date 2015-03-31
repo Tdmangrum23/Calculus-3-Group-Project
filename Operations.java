@@ -40,6 +40,24 @@ public class Operations {
         return new Matrix(Z);
     }
 
+    public static double[][] twoDimensionalMultiplication(double[][] X, double[][] Y) {
+        if (X[0].length != Y.length) {
+            throw new IllegalArgumentException("Dimensions do not match");
+        }
+
+        double[][] Z = new double[X.length][Y[0].length];
+
+        for (int i = 0; i < Z.length; i++) {
+            for (int j = 0; j < Z[0].length; j++) {
+                for (int k = 0; k < X[0].length; k++) {
+                    Z[i][j] += X[i][k] * Y[k][j];
+                }
+            }
+        }
+
+        return Z;
+    }
+
     public static double[][] deepCopy(double[][] matrix) {
         double[][] newM = new double[matrix.length][matrix[0].length];
 
