@@ -3,3 +3,6 @@
 /QR.class
 /QR_Factorization_Householder.class
 /inputFileReader.class
+/LUDecomp.class
+/Main.class
+/Power_Method.class

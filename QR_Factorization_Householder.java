@@ -1,15 +1,14 @@
-import Jama.Matrix;
+import Jama.*;
 import Jama.utils;
-import Java.lang.Math;
 
-public class QR_Factorization_Householder extends Matrix, QR {
+public class QR_Factorization_Householder extends Operations {
 	
 	//Take in a Matrix A and perform Householder on it
 	public Obj[] qr_fact_househ(Matrix inputMatrix) {
 		//Get the sum of the first column of Matrix A
 		double sumOfFirstColMatrix = colsum(inputMatrix, 1);
 		//Get the magnitude of first column of A and store as double
-		double magnitudeOfFirstCol = sqrt(sumOfFirstColMatrix);
+		double magnitudeOfFirstCol = Math.sqrt(sumOfFirstColMatrix);
 		//Make vector v by adding the magnitude to the first entry of first column of A
 		double[][] vectorV_Values = inputMatrix.getcol(inputMatrix, 1).getArray();
 		vectorV_Values[0][0] = vectorV_Values[0][0] + magnitudeOfFirstCol;
