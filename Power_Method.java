@@ -1,4 +1,3 @@
-package Part3;
 import java.util.Arrays;
 
 /** 
