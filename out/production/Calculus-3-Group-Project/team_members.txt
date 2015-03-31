@@ -1,0 +1,5 @@
+Group Name: SwagForce
+Members:
+- Tyler Mangrum
+- Ecclesia Morain
+- Vishaak Ravi
