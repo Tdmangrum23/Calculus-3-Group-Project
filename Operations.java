@@ -46,8 +46,8 @@ public class Operations {
         return Z;
     }
 
-    static double norm(double[][] matrix) {
-        return Arrays.stream(matrix)
+    public static double norm(double[][] inputMatrix) {
+        return Arrays.stream(inputMatrix)
                 .flatMapToDouble(x -> Arrays.stream(x))
                 .map(x -> Math.abs(x))
                 .max().getAsDouble();

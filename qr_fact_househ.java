@@ -17,56 +17,58 @@ public class qr_fact_househ extends Operations {
      * @param A the given matrix
      * @return an array of the two matrices, Q and R
      */
-    public static void factorize(Matrix A) {
+    public static void QR_factorize(Matrix A) {
         
         //Keep a copy of the Matrix for error later
         double[][] errorMatrix = deepCopy(A.getArrayCopy());
         
-        int columns = A.getColumnDimension();
+        int cols = A.getColumnDimension();
         int rows = A.getRowDimension();
         
         //The column; increases by one every iteration
         int[] chosenColumn = {0};
         //The starting position of the column; increases by one every iteration
-        int startPos = 0;
+        int start = 0;
         //The ending position of the column; decreases by one every iteration
         int endPos = rows - 1;
         
-        ArrayList<Matrix> houseHolders = new ArrayList<>();
+        ArrayList<Matrix> houseHoldersList = new ArrayList<>();
         
-        Matrix B = A.copy();
+        Matrix R = A.copy();
         
-        for (int i = 0; i < columns; i++) {
+        for (int i = 0; i < cols; i++) {
 
             //The identity container for the householder matrix
-            Matrix cont = Matrix.identity(rows, rows);
-            Matrix curMatrix = B.getMatrix(startPos, endPos, chosenColumn);
-            Matrix u = calculateU(curMatrix);
+            Matrix container = Matrix.identity(rows, rows);
+            Matrix currentMatrix = R.getMatrix(start, endPos, chosenColumn);
+            Matrix u = calculateU_Matri(currentMatrix);
             
             //From here, we need matrix multiply to find Hn = I - 2uuT
             Matrix houseNRaw = multiplication(u, u.transpose());
-            Matrix ident = Matrix.identity(houseNRaw.getRowDimension(),
+            Matrix identyMatrix = Matrix.identity(houseNRaw.getRowDimension(),
                     houseNRaw.getColumnDimension());
-            Matrix houseN = ident.minus(houseNRaw.times(2));
+            Matrix houseN = identyMatrix.minus(houseNRaw.times(2));
             
             //Put the values into the container matrix
-            cont.setMatrix(startPos, rows - 1, startPos, rows - 1, houseN);
-            houseHolders.add(cont);
-            B = multiplication(cont, B);
+            container.setMatrix(start, rows - 1, start, rows - 1, houseN);
+            houseHoldersList.add(container);
+            R = multiplication(container, R);
             chosenColumn[0] = i + 1;
-            startPos++;
+            start++;
         }
         
         Matrix Q = Matrix.identity(rows, rows);
         
-        for (Matrix i : houseHolders) {
+        for (Matrix i : houseHoldersList) {
             Q = multiplication(Q, i);
         }
 
         // Calculate Error
-        double error = norm(matrixSubtraction(B.getArrayCopy(), twoDimensionalMultiplication(Q.getArrayCopy(), errorMatrix)));
+        double error = norm(matrixSubtraction(R.getArrayCopy(), twoDimensionalMultiplication(Q.getArrayCopy(), errorMatrix)));
+
+        //Print QR Matrixes and error
         Q.print(10, 6);
-        B.print(10, 6);
+        R.print(10, 6);
         System.out.println(error);
     }
     
@@ -78,8 +80,8 @@ public class qr_fact_househ extends Operations {
      * @param A the given 2-dimensional array of doubles
      * @return an array of the two matrices, Q and R
      */
-    public static void factorize(double[][] A) {
-        factorize(new Matrix(A));
+    public static void QR_factorize(double[][] A) {
+        QR_factorize(new Matrix(A));
     }
  
     /**
@@ -88,7 +90,7 @@ public class qr_fact_househ extends Operations {
      * @param v the n X 1 matrix whose u vector is to be found
      * @return the u vector of the given matrix
      */
-    public static Matrix calculateU(Matrix v) {
+    public static Matrix calculateU_Matri(Matrix v) {
         //Create e1, the first vector of the standard basis
         Matrix e = Matrix.identity(v.getRowDimension(), 1);
         //Get the magnitude of the v matrix
@@ -110,7 +112,7 @@ public class qr_fact_househ extends Operations {
         }
         magnitude = Math.sqrt(rawMagnitude);
         double magInverse = Math.pow(magnitude, -1.0);
-        Matrix U = vMutated.times(magInverse);
-        return U;
+        Matrix uMatrix = vMutated.times(magInverse);
+        return uMatrix;
     }
 }
