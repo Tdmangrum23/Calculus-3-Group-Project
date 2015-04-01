@@ -46,6 +46,37 @@ public class Operations {
         return Z;
     }
 
+    /**
+     * Hilbert Matrix
+     * @param n Dimension
+     * @return a n x n Hilbert Matrix
+     */
+    public static Matrix hilbertMatrix(int n) {
+        double[][] hilArray = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                hilArray[i][j] = 1. / (1 + j + i);
+            }
+        }
+        Matrix hilbert = new Matrix(hilArray);
+        return hilbert;
+    }
+
+    /**
+     * Returns the b for the hilbert matrix 
+     * b = (0.1)^(n/3)* (1, 1,...,1)^t
+     * @param n The length of the hilbert matrix n
+     * @return b for the hilbert matrix
+     */
+    public static double[] hilbertB(int n) {
+        double[] b = new double[n];
+        double x = Math.pow(0.1, n/3.);
+        for (int i = 0; i < b.length; i++) {
+            b[i] = x;
+        }
+        return b;
+    }
+
     public static double norm(double[][] inputMatrix) {
         return Arrays.stream(inputMatrix)
                 .flatMapToDouble(x -> Arrays.stream(x))
