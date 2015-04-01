@@ -4,9 +4,15 @@ import java.util.ArrayList;
 
 public class LUDecomp extends Operations {
 
+    public static Matrix U;
+    public static Matrix L;
 
-    public static Matrix lu_fact(double[][] A) {
-        Matrix U = stabilize(A);
+    public static void lu_fact(double[][] A) {
+        //Rudimentary preprocessing of matrix ensures that
+        U = stabilize(A);
+        //Keep a copy of the Matrix for error later
+        double[][] errorMatrix = Operations.deepCopy(A);
+
         ArrayList<Matrix> eMatrices = new ArrayList<>();
         int rowLength = A.length;
         int colLength = A[0].length;
@@ -16,9 +22,8 @@ public class LUDecomp extends Operations {
                 Matrix elementaryMatrix = Matrix.identity(rowLength, colLength);
                 reducingRowIndex = col;
                 double entry = U.get(reducingRowIndex, col);
-                //System.out.println("Entry  " + entry + "  Row  " + (reducingRowIndex) + "  Col  " + (col));
 
-                //use row corresponding to reduce other rows for given column
+                //use previous to reduce other rows for given column
                 double nextColEntry = U.get(row, col);
                 if (nextColEntry != 0) {
 
@@ -29,33 +34,39 @@ public class LUDecomp extends Operations {
                     double[] currentRow = Operations.getRow(A, row + 1);
                     double[] newRow = Operations.vectorSubtraction(currentRow, reducingVector);
                     Operations.setRow(U, row + 1, newRow);
-                    //U.print(5, 3);
                     double[] reducingIVector = Operations.vectorMultiplyByScalar(Operations.getRow(elementaryMatrix.getArray(), reducingRowIndex + 1), reducingFactor);
+                    for(int i = 0; i < reducingIVector.length; i++) {
+                        System.out.print(" " + reducingIVector[i] + " ");
+                    }
                     double[] currentIRow = Operations.getRow(elementaryMatrix.getArray(), row + 1);
-                    double[] newIRow = Operations.vectorSubtraction(currentRow, reducingVector);
-                    Operations.setRow(elementaryMatrix, row + 1, newRow);
-                    System.out.println("element Matrix: ");
-                    elementaryMatrix.print(5, 3);
+                    double[] newIRow = Operations.vectorSubtraction(currentIRow, reducingIVector);
+                    Operations.setRow(elementaryMatrix, row + 1, newIRow);
+//                    System.out.println("element Matrix: ");
+//                    elementaryMatrix.print(5, 3);
+                    //Keeps track of the elementary matrics
                     eMatrices.add(elementaryMatrix);
                 }
             }
         }
-        Matrix L = Operations.transpose((eMatrices.get(0).getArray()));
+        L = Operations.inverse(eMatrices.get(0));
         for (int index = 1; index < eMatrices.size(); index++) {
-            L = Operations.multiplication(L.getArray(), eMatrices.get(index).getArray());
+            L = Operations.multiplication(L.getArray(), Operations.inverse(eMatrices.get(index)).getArray());
         }
+        // Calculate Error
+        double error = Operations.norm(matrixSubtraction(U.getArrayCopy(), Operations.twoDimensionalMultiplication(L.getArrayCopy(), errorMatrix)));
+        //Bad inverse function :(
         System.out.println("L is: ");
         L.print(5, 5);
         System.out.println("And U is ");
         U.print(5, 5);
-        return U;
+        System.out.println("Error " + error);
     }
 
 
     /**
-     * Preprocessing the matrix so that...
-     * @param A
-     * @return
+     * Preprocessing the matrix so that rows with zeroes towards the end of the row appear lower in the matrix
+     * @param A double[][]
+     * @return Matrix
      */
     private static Matrix stabilize(double[][] A) {
         Matrix matrix = new Matrix(A);

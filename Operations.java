@@ -1,5 +1,5 @@
 import Jama.Matrix;
-
+import java.util.Arrays;
 public class Operations {
 
     public static Matrix multiplication(double[][] X, double[][] Y) {
@@ -18,6 +18,37 @@ public class Operations {
         }
 
         return new Matrix(Z);
+    }
+
+    /**
+     * Multiplies MAtrices returns a 2d array
+     * @param X
+     * @param Y
+     * @return double[][]
+     */
+    public static double[][] twoDimensionalMultiplication(double[][] X, double[][] Y) {
+        if (X[0].length != Y.length) {
+            throw new IllegalArgumentException("Dimensions do not match");
+        }
+
+        double[][] Z = new double[X.length][Y[0].length];
+
+        for (int i = 0; i < Z.length; i++) {
+            for (int j = 0; j < Z[0].length; j++) {
+                for (int k = 0; k < X[0].length; k++) {
+                    Z[i][j] += X[i][k] * Y[k][j];
+                }
+            }
+        }
+
+        return Z;
+    }
+
+    static double norm(double[][] matrix) {
+        return Arrays.stream(matrix)
+                .flatMapToDouble(x -> Arrays.stream(x))
+                .map(x -> Math.abs(x))
+                .max().getAsDouble();
     }
 
     public static double[][] deepCopy(double[][] matrix) {
@@ -44,7 +75,7 @@ public class Operations {
     }
 
 
-    public static double[][] transpose(double[][] matrix) {
+    public static Matrix transpose(double[][] matrix) {
         double[][] Tmat = deepCopy(matrix);
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[0].length; j++) {
@@ -52,8 +83,7 @@ public class Operations {
                 Tmat[j][i] = matrix[i][j];
             }
         }
-
-        return Tmat;
+        return new Matrix(Tmat);
     }
 
     public static double[][] matrixSubtraction(double[][] X, double[][] Y) {
@@ -110,12 +140,11 @@ public class Operations {
     }
 
 
-        /**
-         * NEED TO ADD AN INDEXOUTOFBOUNDSEXCEPTION !!!
-         *
-         * @param A        a martrix
-         * @param rowIndex index of the row to be printed
-         */
+    /**
+     *
+     * @param A        a martrix
+     * @param rowIndex index of the row to be printed
+     */
 
     public static void printRow(double[][] A, int rowIndex) {
         Matrix matrix = new Matrix(A);
@@ -126,9 +155,8 @@ public class Operations {
     }
 
     /**
-     * NEED TO ADD AN INDEXOUTOFBOUNDSEXCEPTION !!!
      *
-     * @param A        a martrix
+     * @param A  a martrix
      * @param colIndex index of the column to be printed
      */
     public static void printColumn(double[][] A, int colIndex) {
@@ -197,7 +225,7 @@ public class Operations {
             throw new IllegalArgumentException("Rows are not the same length.");
         }
         for (int index = 0; index < vectorA.length; index++) {
-            System.out.println("vA  " + vectorA[index] + "    vB  " + vectorB[index]);
+            //System.out.println("vA  " + vectorA[index] + "    vB  " + vectorB[index]);
             vectorA[index] = vectorA[index] - vectorB[index];
         }
         return vectorA;
@@ -254,6 +282,12 @@ public class Operations {
         matrix.print(5, 3);
         return matrix;
     }
+
+    public static Matrix inverse(Matrix matrix) {
+        return matrix;
+    }
+
+
 
 
 }
